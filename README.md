@@ -78,7 +78,9 @@ There has been related academic work focused on leveraging machine learning to p
 ## Signatories 
 
 
-Julian Kath						Katalin Bayer
-Kabir Sandrolini					Viraaj Akuthota 
+Julian Kath
+Kabir Sandrolini
+Katalin Bayer
+Viraaj Akuthota 
 
 
