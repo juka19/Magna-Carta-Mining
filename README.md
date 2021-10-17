@@ -1,2 +1,2 @@
 # Magna-Carta-Mining
-DSA-Projekt-Repo
+DSA Project Repo
