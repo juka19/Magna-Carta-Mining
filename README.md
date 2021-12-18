@@ -47,24 +47,24 @@ Magna Carta Mining will increase the accessibility of this complex and incompreh
 ## 3 § Deliverables
 
 ### First Draft: November 8, 2021
-Presentation of clean data
-Completed web-scraping / data collection
-Completed data cleaning
-Initial data wrangling
-Preliminary findings from NLP text-mining
-Preliminary visualizations (predefined / user input)
-Documentation for completed modules
+- Presentation of clean data
+- Completed web-scraping / data collection
+- Completed data cleaning
+- Initial data wrangling
+- Preliminary findings from NLP text-mining
+- Preliminary visualizations (predefined / user input)
+- Documentation for completed modules
 
 
 ### Final Draft: November 29, 2021
-Fully developed modules with functioning code
-Junit testing docs
-Complete documentation
+- Fully developed modules with functioning code
+- Junit testing docs
+- Complete documentation
 
 
 ### Presentation: November 29, 2021
-Slides
-Video
+- Slides
+- Video
 
 
 
@@ -78,9 +78,8 @@ There has been related academic work focused on leveraging machine learning to p
 ## Signatories 
 
 
-Julian Kath
-Kabir Sandrolini
-Katalin Bayer
-Viraaj Akuthota 
-
+- Julian Kath
+- Kabir Sandrolini
+- Katalin Bayer
+- Viraaj Akuthota 
 
