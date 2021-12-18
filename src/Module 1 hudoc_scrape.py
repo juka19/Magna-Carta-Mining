@@ -69,6 +69,10 @@ def get_judgement(url, judgment_dict: dict, n: int):
         title = driver.find_element_by_class_name("lineone").text
         ident = driver.find_element_by_class_name("linetwo").text.split("|")[0].strip()
         driver.find_element_by_id("notice").click()
+        sleep(2)
+        more = driver.find_elements_by_class_name('moreword')
+        if len(more) > 0:
+            [elem.click() for elem in more]
         sleep(uniform(2,3))
         raw_text = driver.find_element_by_xpath('//*[@id="notice"]/div').text
         sleep(uniform(1,2))
@@ -85,7 +89,7 @@ def get_judgement(url, judgment_dict: dict, n: int):
  
 
 driver = webdriver.Edge("C:/Users/julia/Downloads/msedgedriver.exe")
-driver.implicitly_wait(5)       
+driver.implicitly_wait(5)
 driver.get("https://hudoc.echr.coe.int/eng#{%22documentcollectionid2%22:[%22GRANDCHAMBER%22]}")
 scroll()
 
@@ -105,7 +109,7 @@ for url in urls:
     driver.back()
     n += 1
 
-with open('sample_data__unstructured.pickle', 'wb') as handle:
+with open('all_data_finally.pickle', 'wb') as handle:
     dump(judgment_dict, handle)
 
 # To-Dos:
@@ -119,29 +123,6 @@ with open('sample_data__unstructured.pickle', 'wb') as handle:
 
 
 
-driver.get('https://hudoc.echr.coe.int' + urls[0])
-text = driver.find_element_by_class_name("content").text
-title = driver.find_element_by_class_name("lineone").text
-ident = driver.find_element_by_class_name("linetwo").text.split("|")[0].strip()
-driver.find_element_by_id("notice").click()
-soup = BeautifulSoup(driver.page_source)
-sleep(uniform(2,3))
-dicci = dict(
-        zip(
-        [elem.text for elem in soup.find_all(class_ = 'span2 noticefieldheading')],
-        [elem.text.replace("\t", "").split('\n') for elem in soup.find_all(class_ = 'col-offset-2 noticefieldvalue')]
-        )
-    )
-sleep(uniform(1,2))
-url = 'https://hudoc.echr.coe.int' + urls[0]
-judgment_dict[n] = Judgment(
-    title = title,
-    ident = ident,
-    text = text,
-    url = url,
-    case_details = dicci
-)
-
 m = 0
 for key in judgment_dict.keys():
     if bool(judgment_dict[key].case_details) == True:
@@ -149,3 +130,14 @@ for key in judgment_dict.keys():
 
 
 judgment_dict.keys
+
+
+driver.get("https://hudoc.echr.coe.int/eng#{%22itemid%22:[%22001-58004%22]}")
+
+driver.get('https://hudoc.echr.coe.int/eng#{%22itemid%22:[%22001-101740%22]}')
+sleep(1)
+driver.find_element_by_id("notice").click()
+sleep(2)
+more = driver.find_elements_by_class_name('moreword')
+if len(more) > 0:
+    [elem.click() for elem in more]
