@@ -2,6 +2,9 @@
 Magna Carta Mining
 GitHub Repository 
 
+## Manual:
+Our Dashboard (Module 4) was built with dash. To open it you will need to run it via the terminal by calling the Module 4 dash.py script. We ran this from the Anaconda Prompt.
+
 
 ## PREAMBLE
 
