@@ -14,16 +14,19 @@ class Judgment:
     """Contains all essential information of the respective judgment
 
     Args:
-        title (str): Title of the Judgment
-        text (str): full text of the Judgment
-        url (str): url of the Judgement
-        case_details (dic): Dictionary of case_details
+        title (str): Title of the Judgment.
+        text (str): Full text of the Judgment.
+        url (str): URL of the Judgement.
+        case_details (dict): Dictionary of case_details.
     
     Attributes:
-        title (str): Title of the Judgment
-        text (str): full text of the Judgment
-        url (str): url of the Judgment
-        case_details (str): String of case_details
+        title (str): Title of the Judgment.
+        text (str): Full text of the Judgment.
+        url (str): URL of the Judgment.
+        case_details (str): String of case_details.
+    
+    Returns:
+        None.
 
     """
     def __init__(self, title: str, ident: str, text:str, url:str, case_details: str):
@@ -39,8 +42,16 @@ with open('data/scraped_data.pickle', 'rb') as handle:
 
 
 def extract_data(raw_data):
-    """
-    Generates initial dataframe. Takes raw data as input, returns data frame.
+    """Generates initial dataframe. Takes raw data as input, returns data frame and extracts case details.
+    
+    The data fram contains information about the title, identy, text, url, and case details. For the case details in particular, the importance level, conclusion, articles, seperate opinions, keywords, dates, related cases and respondant states are extracted. 
+    
+    Args:
+        raw_data (dic): Dictionary containing scraped judgement data.
+        
+    Returns:
+        The initial data frame. 
+        
     """
     # Transform to Dataframe
     attributes = ['title', 'ident', 'text', 'url', 'case_details']
@@ -64,8 +75,15 @@ def extract_data(raw_data):
 
 
 def clean_data(df):
-    """
-    Takes initial dataframe as argument, drops NA's, formats date, and performs string cleaning on remaining fields.
+    """Takes initial dataframe as argument, drops NA's, formats date, and performs string cleaning on remaining fields.
+    
+    This function also labels each judgement according to whether there it violates the result of any other judgement.
+    
+    Args:
+        df (df): Initial dataframe containing scraped jugement data.
+        
+    Returns:
+        The cleaned data frame.
     """
     df.dropna(inplace=True)
     df['date'] = pd.to_datetime(df['date'], errors="ignore", format="%d/%m/%Y")
@@ -134,6 +152,17 @@ test_data = [(text, label) for text, label in zip(X_test, y_test)]
 
 
 def make_docs(df):
+    """Takes cleaned dataframe as argument and formats judgements as docs.
+    
+    Docs are sequences of tokens and are required for accessing linguistic annotations using spaCy. This function also assignes a dummy variable indicating whether the case conflicts with other judgements or not.
+    
+    Args:
+        df (df): Cleaned dataframe containing scraped jugement data.
+        
+    Returns:
+        A doc of judgement data.
+        
+    """
     n = 1
     docs = []
     for doc, label in nlp.pipe(df, batch_size=10, n_process=3, as_tuples=True):
