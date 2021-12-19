@@ -7,7 +7,8 @@ from collections import Counter
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix
 from spacy.tokens import DocBin
-
+from spacy.matcher import Matcher
+from spacy.util import filter_spans
 
 class Judgment:
     """Contains all essential information of the respective judgment
@@ -32,7 +33,7 @@ class Judgment:
         self.url = url
         self.case_details = case_details
 
-with open('all_data_finally.pickle', 'rb') as handle:
+with open('data/scraped_data.pickle', 'rb') as handle:
     raw_data = load(handle)
 
 
@@ -71,6 +72,7 @@ def clean_data(df):
     df['violations'] = [re.findall(pattern=pattern, string=i, flags=re.S) if re.findall(pattern=pattern, string=i, flags=re.S) else None for i in df['conclusion']]
     pattern = "(?P<no_article_violation>[nN]o\s[vV]iolation\sof\s(?:[Aa]rticle|[Aa]rt[.])\sP?\d{1,2})"
     df['no_violations'] = [re.findall(pattern=pattern, string=i, flags=re.S) if re.findall(pattern=pattern, string=i, flags=re.S) else None for i in df['conclusion']]
+    df['intro_text'] = df['text'].str.extract(r"(?:composed\sof)(?P<intro_text>.*?)(?:following\sjudgment[,]?)", flags=re.S)
 
     labels = []
     for v, n in zip(df['violations'], df['no_violations']):
@@ -88,31 +90,42 @@ def clean_data(df):
     return df
 
 
-
-
 df = extract_data(raw_data)
 df = clean_data(df)
 
-with open('data_cleaned.pickle', 'wb') as handle:
+
+
+### Extraction of judge names with spaCy's rule-based Matching Engine
+nlp=spacy.load("en_core_web_sm")
+n=1
+judges = []
+
+matcher = Matcher(nlp.vocab)
+pattern = [{"ENT_TYPE": "PERSON", "OP": "+"}]
+
+matcher.add("judge", [pattern])
+for doc, ident in zip(nlp.pipe(df['intro_text'], batch_size=10, n_process=3), list(df['ident'])):
+    matches = matcher(doc)
+    spans = [doc[start:end] for match_id, start, end in matches]
+    judges.append([re.sub("(Mr\s?|Mrs\s?|Sir\s?)", "", span.text) for span in filter_spans(spans)])
+    print(f'Completed iteration {n} of {len(df["intro_text"])}')
+    n += 1
+
+# Included into dataframe
+df['judges'] = judges
+
+# Write dataframe to disk
+with open('data/data_cleaned.pickle', 'wb') as handle:
     dump(df, handle)
 
 
-df.groupby('label').size()
-
-
-
-## create train_data
+## create train-test split, stratifying the data as categories are imbalanced
 X_train, X_test, y_train, y_test = train_test_split(
     df['the_law'], df['label'], test_size=0.3, random_state=42,
     stratify=df['label']
 )
 train_data = [(text, label) for text, label in zip(X_train, y_train)]
 test_data = [(text, label) for text, label in zip(X_test, y_test)]
-
-
-
-
-nlp=spacy.load("en_core_web_sm")
 
 
 def make_docs(df):
@@ -159,9 +172,12 @@ nlp = spacy.load("output/model-best")
 
 y_pred = [max(nlp(text).cats, key=nlp(text).cats.get) for text in X_test]
 
-
 cm = confusion_matrix(y_test, y_pred)
 
+with open('data/cm.pickle', 'wb') as handle:
+    dump(cm, handle)
+
+nlp("blablablabla").cats['violation']
 
 
 ## NLP part
