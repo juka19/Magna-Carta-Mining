@@ -81,8 +81,17 @@ pos_ = nx.spring_layout(G)
 
 
 def make_edge(x, y, text, width):
-    """
-    Takes x and y coordinates, text, and width, and makes an edge
+    """Takes two nodes, and creates an edge between them.
+    
+    Args:
+        x (array): containing node coordinates.
+        y (array): containing node coordinates.
+        text (str): associates nodes to a specifc Judgement.
+        width (float): assigns the width of the edge.
+    
+    Returns:
+        The trace between two nodes.
+        
     """
     return  go.Scatter(x = x,
                        y = y,
@@ -186,10 +195,18 @@ pio.write_json(fig2, 'output/plotly_cm.json')
 
 # Create sunburst plot
 def create_sunburst_plot(df, column_name, title, drop_articles=False):
-    """
-    Creates sunburst plot for articles cited by member state. Some additional cleaning of the article
-    data is performed, and the initial dataframe is pivoted longer. Returns a visualization of which articles
-    are most frequently cited by each member state.
+    """Creates sunburst plot for articles cited by member state. 
+    
+    Some additional cleaning of the article data is performed, and the initial dataframe is pivoted longer. Returns a visualization of which articles are most frequently cited by each member state.
+    
+    Args:
+        df (df): Cleaned dataframe containing scraped jugement data.
+        column_name (str): Column name of the Judgement.
+        title (str): Title of the Judgment.
+        drop_articles (boolean): A boolean argument with a default setting as False.
+        
+    Returns:
+        Sunburst Plot.
     """
     data = []
     for country in set(df['respondent_state']):

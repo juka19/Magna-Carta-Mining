@@ -11,7 +11,7 @@ from spacy.matcher import Matcher
 from spacy.util import filter_spans
 
 class Judgment:
-    """Contains all essential information of the respective judgment
+    """Contains all essential information of the respective Judgment.
 
     Args:
         title (str): Title of the Judgment.
@@ -25,9 +25,6 @@ class Judgment:
         url (str): URL of the Judgment.
         case_details (str): String of case_details.
     
-    Returns:
-        None.
-
     """
     def __init__(self, title: str, ident: str, text:str, url:str, case_details: str):
         self.title = title
@@ -47,7 +44,7 @@ def extract_data(raw_data):
     The data fram contains information about the title, identy, text, url, and case details. For the case details in particular, the importance level, conclusion, articles, seperate opinions, keywords, dates, related cases and respondant states are extracted. 
     
     Args:
-        raw_data (dic): Dictionary containing scraped judgement data.
+        raw_data (dict): Dictionary containing raw, scraped Judgements.
         
     Returns:
         The initial data frame. 
@@ -77,10 +74,10 @@ def extract_data(raw_data):
 def clean_data(df):
     """Takes initial dataframe as argument, drops NA's, formats date, and performs string cleaning on remaining fields.
     
-    This function also labels each judgement according to whether there it violates the result of any other judgement.
+    This function also labels each Judgement according to whether there it violates the result of any other Judgement.
     
     Args:
-        df (df): Initial dataframe containing scraped jugement data.
+        df (df): Initial dataframe containing the scraped Jugement.
         
     Returns:
         The cleaned data frame.
@@ -152,15 +149,15 @@ test_data = [(text, label) for text, label in zip(X_test, y_test)]
 
 
 def make_docs(df):
-    """Takes cleaned dataframe as argument and formats judgements as docs.
+    """Takes cleaned dataframe as argument and formats the Judgement as docs.
     
-    Docs are sequences of tokens and are required for accessing linguistic annotations using spaCy. This function also assignes a dummy variable indicating whether the case conflicts with other judgements or not.
+    Docs are sequences of tokens and are required for accessing linguistic annotations using spaCy. This function also assignes a dummy variable indicating whether the case conflicts with other Judgements or not.
     
     Args:
-        df (df): Cleaned dataframe containing scraped jugement data.
+        df (df): Cleaned dataframe containing the scraped Judgement.
         
     Returns:
-        A doc of judgement data.
+        A doc of the Judgement.
         
     """
     n = 1

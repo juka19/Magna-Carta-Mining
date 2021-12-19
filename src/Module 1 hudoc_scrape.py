@@ -9,10 +9,8 @@ from pickle import dump
 
 
 def scroll():
-    """Scrolls down page with Selenium, implementing 0.5 second pause
-
-    Args:
-        None
+    """Scrolls down page with Selenium, implementing 0.5 second pause.
+        
     """
     scroll_pause = 0.5
     last_height = driver.execute_script("return document.body.scrollHeight")
@@ -27,19 +25,19 @@ def scroll():
 
 
 class Judgment:
-    """Contains all essential information of the respective judgment
+    """Contains all essential information of the respective judgment.
 
     Args:
-        title (str): Title of the Judgment
-        text (str): full text of the Judgment
-        url (str): url of the Judgment
-        case_details (dic): Dictionary of case_details
+        title (str): Title of the Judgment.
+        text (str): full text of the Judgment.
+        url (str): url of the Judgment.
+        case_details (dic): Dictionary of case_details.
     
     Attributes:
-        title (str): Title of the Judgment
-        text (str): full text of the Judgment
-        url (str): url of the Judgment
-        case_details (dic): Dictionary of case_details
+        title (str): Title of the Judgment.
+        text (str): full text of the Judgment.
+        url (str): url of the Judgment.
+        case_details (dic): Dictionary of case_details.
 
     """
     def __init__(self, title: str, ident: str, text:str, url:str, case_details: dict):
@@ -51,16 +49,14 @@ class Judgment:
 
 
 def get_judgement(url, judgment_dict: dict, n: int):
-    """Scrapes individual page
+    """Scrapes individual pages to obtain raw text data from Judgements.
 
-    It is also required to pass
+    It is also required to pass an empty judgement dictionary so that attributes can be assigned.
 
     Args:
-        url (str): url for individual judgment
-        judgment_dict (dict): dictionary in which results are stored
+        url (str): URL for individual judgment.
+        judgment_dict (dict): Dictionary in which results are stored.
     
-    Returns:
-        None
     """
     driver.get(url)
     sleep(uniform(4,6))
