@@ -2,6 +2,8 @@ import re
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
+import dash_bootstrap_components as dbc
+from dash_bootstrap_components._components.Container import Container
 from dash.dependencies import Input, Output
 from pickle import load
 import networkx as nx
@@ -20,13 +22,32 @@ cm_plot = pio.read_json('output/plotly_cm.json')
 judges_plot = pio.read_json('output/plotly_sb_judge.json')
 articles_plot = pio.read_json('output/plotly_sb_art.json')
 
+echr_logo = 'https://cdn.imgbin.com/18/22/20/imgbin-european-court-of-human-rights-european-convention-on-human-rights-international-court-human-law-uFMJF636kUqSdFGuS5Mp5tgNB.jpg'
+github_logo = 'https://banner2.cleanpng.com/20180824/jtl/kisspng-computer-icons-logo-portable-network-graphics-clip-icons-for-free-iconza-circle-social-5b7fe46b0bac53.1999041115351082030478.jpg'
+
+hudoc_link = 'https://hudoc.echr.coe.int/eng#{%22documentcollectionid2%22:[%22GRANDCHAMBER%22,%22CHAMBER%22]}'
+github_link = 'https://github.com/juka19/Magna-Carta-Mining'
+
 app = dash.Dash(__name__, suppress_callback_exceptions=True)
 
+
+navbar = dbc.Navbar(
+    dbc.Container(
+            dbc.Row(
+                [
+                    dbc.Col(html.A([html.Img(src=echr_logo, height='60px')], href=hudoc_link), width=5),
+                    dbc.Col(dbc.NavbarBrand("Magna Carta Mining Dashboard")),
+                    dbc.Col(html.A([html.Img(src=github_logo, height='60px')], href=github_link), width=2)
+                ],
+                align='center',
+            )
+    )
+)
+
 # Create layout: Very simple: Logo, Header & 5 tabs
-app.layout = html.Div(
+app.layout = html.Div(children=[
+    navbar, html.Div(
     children=[
-        html.Img(src='https://www.europewatchdog.info/wp-content/uploads/2014/01/COE-logo-ECHR.png', style={'height':'20%', 'width': '20%'}),
-        html.H1("Magna Carta Mining Dashboard"),
         dcc.Tabs(id="tabs", value="tab-1", children=[
             dcc.Tab(label="Overview", value='tab-1'),
             dcc.Tab(label="Judgments over Time", value='tab-2'),
@@ -36,7 +57,7 @@ app.layout = html.Div(
         ]),
         html.Div(id='tab-content')
     ], style={'margin':'auto', 'padding': '30px', 'align': 'center', 'font-family': 'Sans-serif'})
-
+])
 # Create callback for tabs
 @app.callback(Output('tab-content', 'children'), Input('tabs', 'value'))
 def render_content(tab):
@@ -45,9 +66,9 @@ def render_content(tab):
             html.H3('Overview'),
             html.Div(children=[
                 html.H1("Magna Carta Mining"),
-                html.H5("""Every person that is located in the European Union’s territory has and is owed human rights, which they can assert against the State, companies, the police, and your fellow Hertie lecturers or class mates. However, people are unaware of what their rights are, how rights evolve, and what rights even mean. The HUDOC European Union Court of Human Rights database provides access to all the relevant European Union human rights case law. However, this database fails at making this law accessible to the people it serves."""),
-                html.H5("""Magna Carta Mining fills the gap left by HUDOC and makes the legal information accessible to the European Union’s population by providing the relevant information in a manner that is readily understandable (data visualisation), providing the user with the the ability to identify trends in human rights issues, and with the ability to download documents en masse. The data visualisations pertain to rights based issues that are generalised or specific to the user."""),
-                html.H5("""Specific information can be selected by the user who will be provided with a multitude of infographics which they can manipulate. Examples of human rights information that the user can identify include, but is not limited to: the change in human rights issues over time; the number of cases decided by European Member States in any given year; or the most topical issue for any or all European Member States.""")
+                html.P("""Every person that is located in the European Union’s territory has and is owed human rights, which they can assert against the State, companies, the police, and your fellow Hertie lecturers or class mates. However, people are unaware of what their rights are, how rights evolve, and what rights even mean. The HUDOC European Union Court of Human Rights database provides access to all the relevant European Union human rights case law. However, this database fails at making this law accessible to the people it serves."""),
+                html.P("""Magna Carta Mining fills the gap left by HUDOC and makes the legal information accessible to the European Union’s population by providing the relevant information in a manner that is readily understandable (data visualisation), providing the user with the the ability to identify trends in human rights issues, and with the ability to download documents en masse. The data visualisations pertain to rights based issues that are generalised or specific to the user."""),
+                html.P("""Specific information can be selected by the user who will be provided with a multitude of infographics which they can manipulate. Examples of human rights information that the user can identify include, but is not limited to: the change in human rights issues over time; the number of cases decided by European Member States in any given year; or the most topical issue for any or all European Member States.""")
             ], style={'height':400, 'width':800, 'background-color':'cornflowerblue', 'margin': 'auto', 'font-family': 'Sans-serif', 'padding': '10px', 'color': 'white'})
         ])
     elif tab == 'tab-2':
@@ -56,7 +77,7 @@ def render_content(tab):
             dcc.Graph(
                 id='line_plot',
                 figure=line_plot,
-                style={'width': '100vh', 'height': '90vh', 'margin': 'auto'}
+                style={'width': '100%', 'height': '60%', 'margin': 'auto'}
             )
         ])
     elif tab == 'tab-3':
@@ -65,7 +86,7 @@ def render_content(tab):
             dcc.Graph(
                id='network_plot',
                figure=network_plot,
-               style={'width': '100vh', 'height': '90vh', 'margin': 'auto'} 
+               style={'width': '70%', 'height': '150%', 'margin': 'auto'} 
             )
         ])
     elif tab == 'tab-4':
@@ -88,7 +109,7 @@ def render_content(tab):
             dcc.Graph(
                id='cm_plot',
                figure=cm_plot,
-               style={'width': '50%', 'height': '50%', 'margin': 'auto'}
+               style={'width': '100%', 'height': '100%'}
             )
         ])
     elif tab == 'tab-5':
@@ -97,12 +118,12 @@ def render_content(tab):
             dcc.Graph(
                id='articles_plot',
                figure=articles_plot,
-               style={'width': '50%', 'height': '50%', 'margin': 'auto', 'display': 'inline-block'} 
+               style={'width': '700px', 'height': '700px', 'margin': 'auto', 'display': 'inline-block'} 
             ),
             dcc.Graph(
                id='judges_plot',
                figure=judges_plot,
-               style={'width': '50%', 'height': '50%', 'margin': 'auto', 'display': 'inline-block'} 
+               style={'width': '700px', 'height': '700px', 'margin': 'auto', 'display': 'inline-block'} 
             )
         ])
 # Create callback for Text classifier
