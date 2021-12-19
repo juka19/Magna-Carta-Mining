@@ -61,6 +61,9 @@ app.layout = html.Div(children=[
 # Create callback for tabs
 @app.callback(Output('tab-content', 'children'), Input('tabs', 'value'))
 def render_content(tab):
+    """
+    Functions that establishes HTML formatting for each tab of the final dashboard.
+    """
     if tab == 'tab-1':
         return html.Div([
             html.H3('Overview'),
