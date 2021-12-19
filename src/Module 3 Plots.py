@@ -81,6 +81,9 @@ pos_ = nx.spring_layout(G)
 
 
 def make_edge(x, y, text, width):
+    """
+    Takes x and y coordinates, text, and width, and makes an edge
+    """
     return  go.Scatter(x = x,
                        y = y,
                        line = dict(width = width,
@@ -183,6 +186,11 @@ pio.write_json(fig2, 'output/plotly_cm.json')
 
 # Create sunburst plot
 def create_sunburst_plot(df, column_name, title, drop_articles=False):
+    """
+    Creates sunburst plot for articles cited by member state. Some additional cleaning of the article
+    data is performed, and the initial dataframe is pivoted longer. Returns a visualization of which articles
+    are most frequently cited by each member state.
+    """
     data = []
     for country in set(df['respondent_state']):
         df1 = df[df.respondent_state == country]

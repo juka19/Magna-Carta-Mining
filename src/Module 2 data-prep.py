@@ -33,13 +33,15 @@ class Judgment:
         self.url = url
         self.case_details = case_details
 
-# open scraped data from module 1 as raw_data important to define class judgement first!
+# open scraped data from module 1 as raw_data (important to define class judgement first!)
 with open('data/scraped_data.pickle', 'rb') as handle:
     raw_data = load(handle)
 
 
 def extract_data(raw_data):
-    
+    """
+    Generates initial dataframe. Takes raw data as input, returns data frame.
+    """
     # Transform to Dataframe
     attributes = ['title', 'ident', 'text', 'url', 'case_details']
     df = pd.DataFrame([{fn: getattr(raw_data[key], fn) for fn in attributes} for key in raw_data])
@@ -62,6 +64,9 @@ def extract_data(raw_data):
 
 
 def clean_data(df):
+    """
+    Takes initial dataframe as argument, drops NA's, formats date, and performs string cleaning on remaining fields.
+    """
     df.dropna(inplace=True)
     df['date'] = pd.to_datetime(df['date'], errors="ignore", format="%d/%m/%Y")
     df['respondent_state'] = df['respondent_state'].str.extract(r"(?P<respondent_state>.*)")
