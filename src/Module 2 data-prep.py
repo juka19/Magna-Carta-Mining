@@ -157,7 +157,7 @@ def make_docs(df):
         n += 1
     return(docs)
 
-# Process both training and test datasets and save them
+# Process both training and test datasets and save them. This will take quite some time
 train_docs = make_docs(train_data)
 doc_bin = DocBin(docs=train_docs)
 doc_bin.to_disk("./data/train.spacy")
@@ -168,6 +168,7 @@ doc_bin.to_disk("./data/test.spacy")
 
 # For training the model, go to directory, open anaconda and run python -m spacy init fill-config ./base_config.cfg ./config.cfg 
 # Then, run config file: python -m spacy train config.cfg --output ./output
+# This takes quite some time too, so we saved the model in the GitHub repo
 
 # Load trained model
 nlp = spacy.load("output/model-best")

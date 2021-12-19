@@ -143,7 +143,7 @@ for node in G.nodes:
 # Create figure
 fig = go.Figure(layout = layout)
 
-# Add all edge traces
+# Add all edge traces. This will take a couple of minutes
 n = 1
 for trace in edge_trace:
     fig.add_trace(trace)
@@ -153,7 +153,7 @@ for trace in edge_trace:
 # Add node traces
 fig.add_trace(node_trace)
 
-fig.update_layout(showlegend = False) 
+fig.update_layout(showlegend = False, yaxis=dict(range=[-0.2,0.25]), xaxis=dict(range=[-0.3,0.25])) 
 fig.update_xaxes(showticklabels = False)
 fig.update_yaxes(showticklabels = False)
 
@@ -176,7 +176,6 @@ label_classes_inverted = label_classes[::-1].copy()
 cm_text = [[str(cell) for cell in row] for row in cm]
 
 fig2 = ff.create_annotated_heatmap(cm, x=label_classes, y=label_classes_inverted, annotation_text=cm_text, colorscale='Viridis')
-fig2.update_layout(title_text = "<b>Confusion matrix</b>")
 fig2.update_layout(margin=dict(t=50, l=200))
 
 # Save plot
@@ -197,15 +196,15 @@ def create_sunburst_plot(df, column_name, title, drop_articles=False):
             data.append(dic)
     df2 = pd.DataFrame(data)
     if drop_articles: # these were missed in the cleaning step in module 2. 
-        df2 = df2.drop(['13+3', '13+', '14+', 'P1#', '14+P1#1', '14+P1#3', '18+', '14+10', '13+P1#3', '35+'], axis=1)
+        df2 = df2.drop(['13+3', '13+', '14+', 'P1#', '14+P1#1', '14+P1#3', '18+', '14+10', '13+P1#3', '35+', '6+', '14+8', '14+5', '18+5', '+'], axis=1)
     df2 = df2.melt(id_vars='country', var_name='variable') # pivot df to longer format
     df2.dropna(inplace=True)
     fig = px.sunburst(df2, path=['country', 'variable'], values = 'value', title = title)
     return fig
 
 # Create sunbursts and save plots
-fig = create_sunburst_plot(df, 'articles', 'Number of Indictments by Country and Article', drop_articles=True)
+fig = create_sunburst_plot(df, 'articles', 'Number of Allegations by Country and Article', drop_articles=True)
 pio.write_json(fig, 'output/plotly_sb_art.json')
 
-fig = create_sunburst_plot(df, 'judges', 'Number of Indictments by Country and Judge')
+fig = create_sunburst_plot(df, 'judges', 'Number of Allegations by Country and Judge')
 pio.write_json(fig, 'output/plotly_sb_judge.json')
