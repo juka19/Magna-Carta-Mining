@@ -112,4 +112,3 @@ for url in urls:
 # save data
 with open('all_data_finally.pickle', 'wb') as handle:
     dump(judgment_dict, handle)
-

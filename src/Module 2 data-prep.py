@@ -23,10 +23,10 @@ class Judgment:
         title (str): Title of the Judgment
         text (str): full text of the Judgment
         url (str): url of the Judgment
-        case_details (dic): Dictionary of case_details
+        case_details (str): String of case_details
 
     """
-    def __init__(self, title: str, ident: str, text:str, url:str, case_details: dict):
+    def __init__(self, title: str, ident: str, text:str, url:str, case_details: str):
         self.title = title
         self.ident = ident
         self.text = text
@@ -181,5 +181,3 @@ cm = confusion_matrix(y_test, y_pred)
 # Save CM for further viz
 with open('data/cm.pickle', 'wb') as handle:
     dump(cm, handle)
-
-
