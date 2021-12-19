@@ -9,7 +9,7 @@ from pickle import dump
 
 
 def scroll():
-    """Scrolls down page with Selenium
+    """Scrolls down page with Selenium, implementing 0.5 second pause
 
     Args:
         None
@@ -98,7 +98,7 @@ soup = BeautifulSoup(driver.page_source) # save index once scroll is finished
 # save all urls
 urls = list(set(["https://hudoc.echr.coe.int/eng#{" + elem['href'].partition('"GRANDCHAMBER"],')[2] for elem in soup.find_all(class_ = 'availableonlylink', href = True) if elem.text == 'English']))
 
-# scrape all the data adn store it in the attributes of the class instances each judgement one instance
+# scrape all the data and store it in the attributes of the class instances, with each judgement as one instance
 n = 1 
 judgment_dict = {}
 for url in urls:
