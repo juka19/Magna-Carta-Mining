@@ -1,5 +1,3 @@
-from math import nan
-from collections import Counter
 import re
 import dash
 import dash_core_components as dcc
@@ -12,8 +10,10 @@ import plotly.io as pio
 import plotly.graph_objects as go
 import spacy
 
+# load spacy model for classifier
 nlp = spacy.load("output/model-best")
 
+# load all plots from module 3
 network_plot = pio.read_json('output/plotly_network.json')
 line_plot = pio.read_json('output/plotly_bycountry.json')
 cm_plot = pio.read_json('output/plotly_cm.json')
@@ -22,6 +22,7 @@ articles_plot = pio.read_json('output/plotly_sb_art.json')
 
 app = dash.Dash(__name__, suppress_callback_exceptions=True)
 
+# Create layout: Very simple: Logo, Header & 5 tabs
 app.layout = html.Div(
     children=[
         html.Img(src='https://www.europewatchdog.info/wp-content/uploads/2014/01/COE-logo-ECHR.png', style={'height':'20%', 'width': '20%'}),
@@ -36,6 +37,7 @@ app.layout = html.Div(
         html.Div(id='tab-content')
     ], style={'margin':'auto', 'padding': '30px', 'align': 'center', 'font-family': 'Sans-serif'})
 
+# Create callback for tabs
 @app.callback(Output('tab-content', 'children'), Input('tabs', 'value'))
 def render_content(tab):
     if tab == 'tab-1':
@@ -103,6 +105,7 @@ def render_content(tab):
                style={'width': '50%', 'height': '50%', 'margin': 'auto', 'display': 'inline-block'} 
             )
         ])
+# Create callback for Text classifier
 @app.callback(Output('model-output', 'children'), Input('text-input', 'value'))
 def update_output(value):
     return f"Probability of no violation: {round(nlp(value).cats['no_violation'], 2)} | Probability of non-violation: {round(nlp(value).cats['violation'], 2)} | Probability of Other: {round(nlp(value).cats['other'], 2)} | Probability of Mixed: {round(nlp(value).cats['mixed'], 2)}"

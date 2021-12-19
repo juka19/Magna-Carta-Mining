@@ -86,19 +86,19 @@ def get_judgement(url, judgment_dict: dict, n: int):
         )
     else:
         next
- 
 
+# initialize driver from downloads folder
 driver = webdriver.Edge("C:/Users/julia/Downloads/msedgedriver.exe")
-driver.implicitly_wait(5)
+driver.implicitly_wait(5) # set implicit wait to 5 sec
 driver.get("https://hudoc.echr.coe.int/eng#{%22documentcollectionid2%22:[%22GRANDCHAMBER%22]}")
-scroll()
+scroll() # scroll index page down to load all further links
 
-soup = BeautifulSoup(driver.page_source)
-# urls = [('https://hudoc.echr.coe.int' + elem['href']) for elem in list(set(soup.find_all('a', class_ = re.compile('document-link'), href=True)))]
+soup = BeautifulSoup(driver.page_source) # save index once scroll is finished
 
+# save all urls
 urls = list(set(["https://hudoc.echr.coe.int/eng#{" + elem['href'].partition('"GRANDCHAMBER"],')[2] for elem in soup.find_all(class_ = 'availableonlylink', href = True) if elem.text == 'English']))
 
-
+# scrape all the data adn store it in the attributes of the class instances each judgement one instance
 n = 1 
 judgment_dict = {}
 for url in urls:
@@ -109,35 +109,7 @@ for url in urls:
     driver.back()
     n += 1
 
+# save data
 with open('all_data_finally.pickle', 'wb') as handle:
     dump(judgment_dict, handle)
 
-# To-Dos:
-# 1. More test runs
-# 2. fix some bugs, figure out best sleeping times
-# 3. Scrape the data
-
-
-[elem.text for elem in soup.find_all(class_ = 'span2 noticefieldheading')]
-[elem.text.replace("\t", "").split('\n') for elem in soup.find_all(class_ = 'col-offset-2 noticefieldvalue')]
-
-
-
-m = 0
-for key in judgment_dict.keys():
-    if bool(judgment_dict[key].case_details) == True:
-        m += 1
-
-
-judgment_dict.keys
-
-
-driver.get("https://hudoc.echr.coe.int/eng#{%22itemid%22:[%22001-58004%22]}")
-
-driver.get('https://hudoc.echr.coe.int/eng#{%22itemid%22:[%22001-101740%22]}')
-sleep(1)
-driver.find_element_by_id("notice").click()
-sleep(2)
-more = driver.find_elements_by_class_name('moreword')
-if len(more) > 0:
-    [elem.click() for elem in more]

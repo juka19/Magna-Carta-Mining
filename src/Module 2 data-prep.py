@@ -33,6 +33,7 @@ class Judgment:
         self.url = url
         self.case_details = case_details
 
+# open scraped data from module 1 as raw_data important to define class judgement first!
 with open('data/scraped_data.pickle', 'rb') as handle:
     raw_data = load(handle)
 
@@ -89,29 +90,28 @@ def clean_data(df):
     df = df.loc[df['text'].str.len() < 1000000]
     return df
 
-
+# Extracting & Cleaning of data
 df = extract_data(raw_data)
 df = clean_data(df)
 
 
-
 ### Extraction of judge names with spaCy's rule-based Matching Engine
 nlp=spacy.load("en_core_web_sm")
-n=1
+n = 1
 judges = []
 
 matcher = Matcher(nlp.vocab)
-pattern = [{"ENT_TYPE": "PERSON", "OP": "+"}]
+pattern = [{"ENT_TYPE": "PERSON", "OP": "+"}] # Match on or multiple Entities of type Person
 
 matcher.add("judge", [pattern])
 for doc, ident in zip(nlp.pipe(df['intro_text'], batch_size=10, n_process=3), list(df['ident'])):
     matches = matcher(doc)
-    spans = [doc[start:end] for match_id, start, end in matches]
-    judges.append([re.sub("(Mr\s?|Mrs\s?|Sir\s?)", "", span.text) for span in filter_spans(spans)])
+    spans = [doc[start:end] for match_id, start, end in matches] # get spans of matches in doc
+    judges.append([re.sub("(Mr\s?|Mrs\s?|Sir\s?)", "", span.text) for span in filter_spans(spans)]) # Filter_spans removes duplicate entities (e.g. First and Last name separate)
     print(f'Completed iteration {n} of {len(df["intro_text"])}')
     n += 1
 
-# Included into dataframe
+# Include judges into dataframe
 df['judges'] = judges
 
 # Write dataframe to disk
@@ -157,6 +157,7 @@ def make_docs(df):
         n += 1
     return(docs)
 
+# Process both training and test datasets and save them
 train_docs = make_docs(train_data)
 doc_bin = DocBin(docs=train_docs)
 doc_bin.to_disk("./data/train.spacy")
@@ -168,68 +169,17 @@ doc_bin.to_disk("./data/test.spacy")
 # For training the model, go to directory, open anaconda and run python -m spacy init fill-config ./base_config.cfg ./config.cfg 
 # Then, run config file: python -m spacy train config.cfg --output ./output
 
+# Load trained model
 nlp = spacy.load("output/model-best")
 
+# Make predictions on test dataset
 y_pred = [max(nlp(text).cats, key=nlp(text).cats.get) for text in X_test]
 
+# Create confusion matrix
 cm = confusion_matrix(y_test, y_pred)
 
+# Save CM for further viz
 with open('data/cm.pickle', 'wb') as handle:
     dump(cm, handle)
 
-nlp("blablablabla").cats['violation']
-
-
-## NLP part
-nlp = spacy.load('en_core_web_lg')
-nlp.max_length = max([len(i) for i in df['text']]) + 100
-
-docs = df['text'].tolist()
-
-def token_filter(token):
-    return not (token.is_punct | token.is_space | token.is_stop | len(token.text) <= 4)
-
-filtered_tokens = {}
-n = 1
-for doc, ident in zip(nlp.pipe(docs, disable=['ner', 'tagger', 'parser'], batch_size=10, n_process=3), list(df['ident'])):
-    tokens = [token for token in doc if token_filter(token)]
-    filtered_tokens[ident] = tokens
-    print(f'Completed iteration {n} of {len(docs)}')
-    n += 1
-
-def preprocess(judgment_dict:dict):
-    """Preprocesses individual dictionary entries 
-
-    Args:
-
-    Returns:
-
-    """
-    df = pd.DataFrame(columns = ['name', 'id', 'doc'] )
-    keys = judgment_dict.keys()
-    for key in keys:
-        doc = nlp(judgment_dict[key].text, batch_size=10, n_threads=3)
-        for a, b, c in zip([judgment_dict[key].title] * len(doc), [str(key)] * len(doc), [token for token in doc]):
-            df = df.append({'name' : a, 'id': b, 'doc' : c}, ignore_index = True)
-        print(f'Processing Doc {key}, ID number: {judgment_dict[key].title}')
-    return df
-
-
-
-    
-preprocess(raw_data)
-
-
-
-
-
-
-
-# To-Dos:
-# 1. extract metainformation from judgments
-# 2. 'non-NLP'-data preperation (how many judgments over time, per article, etc.)
-# 3. exploratory data analysis
-
-# Data visualization & Communication
-# Plan: data visualization & Dashboard
 
